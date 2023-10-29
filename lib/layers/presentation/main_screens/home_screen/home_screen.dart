@@ -37,8 +37,7 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      body: ListView(
         children: [
           const CarouselView(),
           1.height(context),
@@ -54,13 +53,77 @@ class HomeScreen extends StatelessWidget {
               2.height(context),
               const LightGreyDivisionHori(),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: size.width * 0.025),
+                padding: EdgeInsets.only(left: size.width * 0.025),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       'Musical Selections',
                       style: AppStyles.extraBold,
+                    ),
+                    1.height(context),
+                    Container(
+                      margin: EdgeInsets.only(bottom: size.width * 0.025),
+                      height: 150,
+                      width: double.maxFinite,
+                      child: ListView(
+                        // shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        children: [
+                          Container(
+                            height: 100,
+                            width: size.width * 0.5,
+                            decoration: BoxDecoration(
+                              color: AppColors.black,
+                              borderRadius: BorderRadius.circular(AppStyles.defaultBorderRadius),
+                            ),
+                          ),
+                          Column(
+                            children: [
+                              Expanded(
+                                child: Container(
+                                  height: 20,
+                                  width: size.width * 0.4,
+                                  margin: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                  ),
+                                  // margin: const EdgeInsets.symmetric(horizontal: 3),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.grey,
+                                    borderRadius: BorderRadius.circular(AppStyles.defaultBorderRadius),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Expanded(
+                                child: Container(
+                                  height: 20,
+                                  width: size.width * 0.4,
+                                  margin: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                  ),
+                                  // margin: const EdgeInsets.symmetric(horizontal: 3),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.mainColor,
+                                    borderRadius: BorderRadius.circular(AppStyles.defaultBorderRadius),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(right: size.width * 0.025),
+                            height: 100,
+                            width: size.width * 0.5,
+                            decoration: BoxDecoration(
+                              color: AppColors.black,
+                              borderRadius: BorderRadius.circular(AppStyles.defaultBorderRadius),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
