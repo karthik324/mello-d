@@ -33,10 +33,10 @@ class MyPersistentTabView extends StatelessWidget {
   const MyPersistentTabView({super.key});
 
   List<Widget> _buildScreens() {
-    return const [
-      HomeScreen(),
-      SearchScreen(),
-      LibraryScreen(),
+    return [
+      const HomeScreen(),
+      SearchScreen(), 
+      const LibraryScreen(),
     ];
   }
 

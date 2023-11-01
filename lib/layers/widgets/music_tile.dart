@@ -8,11 +8,13 @@ class MusicTile extends StatelessWidget {
     required this.artist,
     required this.image,
     required this.title,
+    required this.heroTag,
   });
 
   final String title;
   final String artist;
   final String image;
+  final String heroTag;
 
   @override
   Widget build(BuildContext context) {
@@ -24,17 +26,18 @@ class MusicTile extends StatelessWidget {
         children: [
           Row(
             children: [
-              Container(
-                height: 60,
-                width: 60,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(
-                    AppStyles.defaultBorderRadius,
-                  ),
-                  image: DecorationImage(
-                    fit: BoxFit.cover,
-                    image: AssetImage(
-                      image,
+              Hero(
+                tag: heroTag ,
+                child: Container(
+                  height: 60,
+                  width: 60,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: AssetImage(
+                        image,
+                      ),
                     ),
                   ),
                 ),

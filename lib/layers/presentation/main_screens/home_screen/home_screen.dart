@@ -1,11 +1,13 @@
 import 'dart:math';
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:mello_d/extensions/int_extension.dart';
+import 'package:mello_d/layers/presentation/sub_screens/play_music_screen/play_music_screen.dart';
+import 'package:mello_d/layers/routes/app_routes.dart';
 import 'package:mello_d/layers/styles/app_colors.dart';
 import 'package:mello_d/layers/styles/app_images.dart';
 import 'package:mello_d/layers/styles/app_styles.dart';
+import 'package:mello_d/layers/widgets/custom_app_bar.dart';
 import 'package:mello_d/layers/widgets/divider_horizontal.dart';
 import 'package:mello_d/layers/widgets/music_tile.dart';
 
@@ -16,16 +18,14 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(
-        leading: Padding(
-          padding: EdgeInsets.all(size.width * 0.025),
-          child: const CircleAvatar(
-            radius: 14,
-            backgroundImage: AssetImage(
-              AppImages.profilePlaceHolder,
-            ),
+      appBar: CustomAppBar(
+        leading: const CircleAvatar(
+          radius: 14,
+          backgroundImage: AssetImage(
+            AppImages.profilePlaceHolder,
           ),
         ),
+        context: context,
         actions: [
           Padding(
             padding: EdgeInsets.all(size.width * 0.025),
@@ -47,91 +47,105 @@ class HomeScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: size.width * 0.025),
+                padding: EdgeInsets.symmetric(horizontal: size.width * 0.015),
                 child: const RecentlyPlayedView(),
               ),
               2.height(context),
               const LightGreyDivisionHori(),
               Padding(
                 padding: EdgeInsets.only(left: size.width * 0.025),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Musical Selections',
-                      style: AppStyles.extraBold,
-                    ),
-                    1.height(context),
-                    Container(
-                      margin: EdgeInsets.only(bottom: size.width * 0.025),
-                      height: 150,
-                      width: double.maxFinite,
-                      child: ListView(
-                        // shrinkWrap: true,
-                        scrollDirection: Axis.horizontal,
-                        children: [
-                          Container(
-                            height: 100,
-                            width: size.width * 0.5,
-                            decoration: BoxDecoration(
-                              color: AppColors.black,
-                              borderRadius: BorderRadius.circular(AppStyles.defaultBorderRadius),
-                            ),
-                          ),
-                          Column(
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  height: 20,
-                                  width: size.width * 0.4,
-                                  margin: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                  ),
-                                  // margin: const EdgeInsets.symmetric(horizontal: 3),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.grey,
-                                    borderRadius: BorderRadius.circular(AppStyles.defaultBorderRadius),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              Expanded(
-                                child: Container(
-                                  height: 20,
-                                  width: size.width * 0.4,
-                                  margin: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                  ),
-                                  // margin: const EdgeInsets.symmetric(horizontal: 3),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.mainColor,
-                                    borderRadius: BorderRadius.circular(AppStyles.defaultBorderRadius),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(right: size.width * 0.025),
-                            height: 100,
-                            width: size.width * 0.5,
-                            decoration: BoxDecoration(
-                              color: AppColors.black,
-                              borderRadius: BorderRadius.circular(AppStyles.defaultBorderRadius),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                child: MusicalSelectionView(size: size),
               )
             ],
           ),
         ],
       ),
+    );
+  }
+}
+
+class MusicalSelectionView extends StatelessWidget {
+  const MusicalSelectionView({
+    super.key,
+    required this.size,
+  });
+
+  final Size size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Musical Selections',
+          style: AppStyles.extraBold,
+        ),
+        1.height(context),
+        Container(
+          margin: EdgeInsets.only(bottom: size.width * 0.025),
+          height: 150,
+          width: double.maxFinite,
+          child: ListView(
+            // shrinkWrap: true,
+            scrollDirection: Axis.horizontal,
+            children: [
+              Container(
+                height: 100,
+                width: size.width * 0.5,
+                decoration: BoxDecoration(
+                  color: AppColors.black,
+                  borderRadius: BorderRadius.circular(AppStyles.defaultBorderRadius),
+                ),
+              ),
+              Column(
+                children: [
+                  Expanded(
+                    child: Container(
+                      height: 20,
+                      width: size.width * 0.4,
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                      ),
+                      // margin: const EdgeInsets.symmetric(horizontal: 3),
+                      decoration: BoxDecoration(
+                        color: AppColors.grey,
+                        borderRadius: BorderRadius.circular(AppStyles.defaultBorderRadius),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Expanded(
+                    child: Container(
+                      height: 20,
+                      width: size.width * 0.4,
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                      ),
+                      // margin: const EdgeInsets.symmetric(horizontal: 3),
+                      decoration: BoxDecoration(
+                        color: AppColors.mainColor,
+                        borderRadius: BorderRadius.circular(AppStyles.defaultBorderRadius),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Container(
+                margin: EdgeInsets.only(right: size.width * 0.025),
+                height: 100,
+                width: size.width * 0.5,
+                decoration: BoxDecoration(
+                  color: AppColors.black,
+                  borderRadius: BorderRadius.circular(AppStyles.defaultBorderRadius),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
@@ -151,19 +165,35 @@ class RecentlyPlayedView extends StatelessWidget {
           style: AppStyles.extraBold,
         ),
         1.height(context),
-        const Column(
+        Column(
           children: [
-            MusicTile(
-              artist: 'Travis Scott',
-              image: AppImages.travisScottPlaceHolder,
-              title: 'Highest in the room',
+            InkWell(
+              borderRadius: BorderRadius.circular(AppStyles.defaultBorderRadius),
+              onTap: () {
+                AppRoutes.goTo(
+                  context: context,
+                  fromBottomToUp: true,
+                  screen: PlayMusicScreen(),
+                );
+              },
+              child: const Padding(
+                padding: EdgeInsets.all(4),
+                child: MusicTile(
+                  heroTag: 'hero',
+                  artist: 'Travis Scott',
+                  image: AppImages.travisScottPlaceHolder,
+                  title: 'Highest in the room',
+                ),
+              ),
             ),
-            MusicTile(
+            const MusicTile(
+              heroTag: 'hah',
               artist: 'Home',
               image: AppImages.resonancePlaceHolder,
               title: 'Resonance',
             ),
-            MusicTile(
+            const MusicTile(
+              heroTag: 'asdasdf',
               artist: 'Strawberry Guy',
               image: AppImages.strawBerryGuyPlaceHolder,
               title: 'What would I do',
