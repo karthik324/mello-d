@@ -4,10 +4,25 @@ import 'package:mello_d/layers/routes/app_routes.dart';
 import 'package:mello_d/layers/styles/app_colors.dart';
 import 'package:mello_d/layers/styles/app_images.dart';
 import 'package:mello_d/layers/styles/app_styles.dart';
+import 'package:mello_d/layers/styles/constants.dart';
 import 'package:mello_d/layers/widgets/custom_app_bar.dart';
+import 'package:on_audio_query/on_audio_query.dart';
 
 class PlayMusicScreen extends StatelessWidget {
-  const PlayMusicScreen({super.key});
+  const PlayMusicScreen({
+    super.key,
+    required this.artist,
+    required this.controller,
+    required this.id,
+    required this.songName,
+    required this.hero,
+  });
+
+  final String artist;
+  final String songName;
+  final OnAudioQuery controller;
+  final int id;
+  final String hero;
 
   @override
   Widget build(BuildContext context) {
@@ -32,32 +47,43 @@ class PlayMusicScreen extends StatelessWidget {
           ),
           3.height(context),
           Text(
-            'Highest In the room',
+            songName,
             style: AppStyles.medium.copyWith(
               fontSize: 20,
             ),
+            textAlign: TextAlign.center,
           ),
           Text(
-            'Travis Scott',
+            artist,
             style: AppStyles.regular.copyWith(
               fontSize: 15,
               color: AppColors.grey,
             ),
+            textAlign: TextAlign.center,
           ),
           5.height(context),
           Hero(
-            tag: 'hero',
-            child: Container(
-              width: size.width * 0.85,
-              height: size.width - 50,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image: AssetImage(
-                    AppImages.travisScottPlaceHolder,
-                  ),
-                ),
+            tag: hero,
+            // child: Container(
+            //   width: size.width * 0.85,
+            //   height: size.width - 50,
+            //   decoration: const BoxDecoration(
+            //     shape: BoxShape.circle,
+            //     image: DecorationImage(
+            //       fit: BoxFit.cover,
+            //       image: AssetImage(
+            //         AppImages.travisScottPlaceHolder,
+            //       ),
+            //     ),
+            //   ),
+            // ),
+            child: SizedBox(
+                width: size.width * 0.85,
+                height: size.width - 50,
+              child: QueryArtworkWidget(
+                controller: controller,
+                id: id,
+                type: ArtworkType.AUDIO,
               ),
             ),
           ),

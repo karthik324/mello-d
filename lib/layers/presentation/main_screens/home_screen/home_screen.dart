@@ -7,6 +7,7 @@ import 'package:mello_d/layers/routes/app_routes.dart';
 import 'package:mello_d/layers/styles/app_colors.dart';
 import 'package:mello_d/layers/styles/app_images.dart';
 import 'package:mello_d/layers/styles/app_styles.dart';
+import 'package:mello_d/layers/styles/constants.dart';
 import 'package:mello_d/layers/widgets/custom_app_bar.dart';
 import 'package:mello_d/layers/widgets/divider_horizontal.dart';
 import 'package:mello_d/layers/widgets/music_tile.dart';
@@ -107,12 +108,27 @@ class _HomeScreenState extends State<HomeScreen> {
                           shrinkWrap: true,
                           itemCount: item.data!.length,
                           itemBuilder: (context, index) {
-                            return MusicTile(
-                              artist: item.data?[index].artist ?? 'Unknown',
-                              controller: _audioQuery,
-                              heroTag: 'Hero',
-                              title: item.data?[index].title ?? 'Unknown',
-                              id: item.data?[index].id ?? 0,
+                            return InkWell(
+                              onTap: () {
+                                AppRoutes.goTo(
+                                  context: context,
+                                  fromBottomToUp: true,
+                                  screen: PlayMusicScreen(
+                                    artist: item.data?[index].artist ?? 'Unknown',
+                                    controller: _audioQuery,
+                                    songName: item.data?[index].title ?? 'Unknown',
+                                    id: item.data?[index].id ?? 0,
+                                    hero: 'hero$index',
+                                  ),
+                                );
+                              },
+                              child: MusicTile(
+                                artist: item.data?[index].artist ?? 'Unknown',
+                                controller: _audioQuery,
+                                heroTag: 'hero$index',
+                                title: item.data?[index].title ?? 'Unknown',
+                                id: item.data?[index].id ?? 0,
+                              ),
                             );
                           },
                         );
