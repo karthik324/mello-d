@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mello_d/layers/bloc/home/home_bloc.dart';
 import 'package:mello_d/layers/presentation/main_screens/home_screen/home_screen.dart';
 import 'package:mello_d/layers/presentation/main_screens/library_screen/library_screen.dart';
 import 'package:mello_d/layers/presentation/main_screens/search_screen/search_screen.dart';
@@ -15,16 +17,22 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Mello D',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFFF740F)),
-        useMaterial3: true,
-        fontFamily: 'Poppins',
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => MusicBloc(),
+        ),
+      ],
+      child: MaterialApp(
+        title: 'Mello D',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFFF740F)),
+          useMaterial3: true,
+          fontFamily: 'Poppins',
+        ),
+        home: const MyPersistentTabView(),
+        debugShowCheckedModeBanner: false,
       ),
-      home: const MyPersistentTabView(),
-      debugShowCheckedModeBanner: false,
-      
     );
   }
 }
@@ -35,7 +43,7 @@ class MyPersistentTabView extends StatelessWidget {
   List<Widget> _buildScreens() {
     return [
       const HomeScreen(),
-      SearchScreen(), 
+      SearchScreen(),
       const LibraryScreen(),
     ];
   }

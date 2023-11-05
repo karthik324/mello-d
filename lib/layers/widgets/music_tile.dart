@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mello_d/extensions/int_extension.dart';
+import 'package:mello_d/layers/styles/app_colors.dart';
 import 'package:mello_d/layers/styles/app_styles.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
@@ -39,6 +41,10 @@ class MusicTile extends StatelessWidget {
                     controller: controller,
                     id: id,
                     type: ArtworkType.AUDIO,
+                    nullArtworkWidget: Icon(
+                      CupertinoIcons.music_note,
+                      color: AppColors.black,
+                    ),
                   ),
                 ),
               ),

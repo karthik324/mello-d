@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mello_d/extensions/int_extension.dart';
 import 'package:mello_d/layers/routes/app_routes.dart';
 import 'package:mello_d/layers/styles/app_colors.dart';
-import 'package:mello_d/layers/styles/app_images.dart';
 import 'package:mello_d/layers/styles/app_styles.dart';
-import 'package:mello_d/layers/styles/constants.dart';
 import 'package:mello_d/layers/widgets/custom_app_bar.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 

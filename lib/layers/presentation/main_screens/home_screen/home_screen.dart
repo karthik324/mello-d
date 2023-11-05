@@ -1,45 +1,42 @@
 import 'dart:math';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mello_d/extensions/int_extension.dart';
+import 'package:mello_d/layers/bloc/home/home_bloc.dart';
+import 'package:mello_d/layers/bloc/home/home_state.dart';
 import 'package:mello_d/layers/presentation/sub_screens/play_music_screen/play_music_screen.dart';
 import 'package:mello_d/layers/routes/app_routes.dart';
 import 'package:mello_d/layers/styles/app_colors.dart';
 import 'package:mello_d/layers/styles/app_images.dart';
 import 'package:mello_d/layers/styles/app_styles.dart';
-import 'package:mello_d/layers/styles/constants.dart';
 import 'package:mello_d/layers/widgets/custom_app_bar.dart';
 import 'package:mello_d/layers/widgets/divider_horizontal.dart';
 import 'package:mello_d/layers/widgets/music_tile.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
+  // final OnAudioQuery _audioQuery = OnAudioQuery();
 
-class _HomeScreenState extends State<HomeScreen> {
-  final OnAudioQuery _audioQuery = OnAudioQuery();
+  // bool _hasPermission = false;
 
-  bool _hasPermission = false;
+  // @override
+  // void initState() {
+  //   super.initState();
+  // checkAndRequestPermissions();
+  // }
 
-  @override
-  void initState() {
-    super.initState();
-    checkAndRequestPermissions();
-  }
+  // checkAndRequestPermissions({bool retry = false}) async {
+  //   // The param 'retryRequest' is false, by default.
+  //   _hasPermission = await _audioQuery.checkAndRequest(
+  //     retryRequest: retry,
+  //   );
 
-  checkAndRequestPermissions({bool retry = false}) async {
-    // The param 'retryRequest' is false, by default.
-    _hasPermission = await _audioQuery.checkAndRequest(
-      retryRequest: retry,
-    );
-
-    // Only call update the UI if application has all required permissions.
-    _hasPermission ? setState(() {}) : null;
-  }
+  //   // Only call update the UI if application has all required permissions.
+  //   _hasPermission ? setState(() {}) : null;
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -77,29 +74,43 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: EdgeInsets.symmetric(horizontal: size.width * 0.015),
                 child: const RecentlyPlayedView(),
               ),
-              !_hasPermission
-                  ? noAccessToLibraryWidget()
-                  : FutureBuilder<List<SongModel>>(
-                      // Default values:
-                      future: _audioQuery.querySongs(
-                        sortType: null,
-                        orderType: OrderType.ASC_OR_SMALLER,
-                        uriType: UriType.EXTERNAL,
-                        ignoreCase: true,
-                      ),
+              BlocBuilder<MusicBloc, MusicState>(
+                builder: (context, state) {
+                  if (state is NoPermissionState) {
+                    return noAccessToLibraryWidget(context);
+                  } else if (state is GainedPermissionState) {
+                    return FutureBuilder<List<SongModel>>(
+                      future: context.read<MusicBloc>().audioQuery.querySongs(
+                            sortType: null,
+                            orderType: OrderType.ASC_OR_SMALLER,
+                            uriType: UriType.EXTERNAL,
+                            ignoreCase: true,
+                          ),
                       builder: (context, item) {
+                        final audioQuery = context.read<MusicBloc>().audioQuery;
                         // Display error, if any.
                         if (item.hasError) {
-                          return Text(item.error.toString());
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                            child: Text(item.error.toString()),
+                          );
                         }
 
                         // Waiting content.
                         if (item.data == null) {
-                          return const CircularProgressIndicator();
+                          return const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                            child: CircularProgressIndicator(),
+                          );
                         }
 
                         // 'Library' is empty.
-                        if (item.data!.isEmpty) return const Text("Nothing found!");
+                        if (item.data!.isEmpty) {
+                          return const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                            child: Text("Nothing found!"),
+                          );
+                        }
 
                         // You can use [item.data!] direct or you can create a:
                         // List<SongModel> songs = item.data!;
@@ -108,32 +119,39 @@ class _HomeScreenState extends State<HomeScreen> {
                           shrinkWrap: true,
                           itemCount: item.data!.length,
                           itemBuilder: (context, index) {
+                            final song = item.data?[index];
                             return InkWell(
                               onTap: () {
-                                AppRoutes.goTo(
-                                  context: context,
-                                  fromBottomToUp: true,
-                                  screen: PlayMusicScreen(
-                                    artist: item.data?[index].artist ?? 'Unknown',
-                                    controller: _audioQuery,
-                                    songName: item.data?[index].title ?? 'Unknown',
-                                    id: item.data?[index].id ?? 0,
-                                    hero: 'hero$index',
-                                  ),
-                                );
+                                context.read<MusicBloc>().playMusic(song?.uri ?? '');
+                                // AppRoutes.goTo(
+                                //   context: context,
+                                //   fromBottomToUp: true,
+                                //   screen: PlayMusicScreen(
+                                //     artist: song?.artist ?? 'Unknown',
+                                //     controller: audioQuery,
+                                //     songName: song?.title ?? 'Unknown',
+                                //     id: song?.id ?? 0,
+                                //     hero: 'hero$index',
+                                //   ),
+                                // );
                               },
                               child: MusicTile(
-                                artist: item.data?[index].artist ?? 'Unknown',
-                                controller: _audioQuery,
+                                artist: song?.artist ?? 'Unknown',
+                                controller: audioQuery,
                                 heroTag: 'hero$index',
-                                title: item.data?[index].title ?? 'Unknown',
-                                id: item.data?[index].id ?? 0,
+                                title: song?.title ?? 'Unknown',
+                                id: song?.id ?? 0,
                               ),
                             );
                           },
                         );
                       },
-                    ),
+                    );
+                  } else {
+                    return const Text('Loading...');
+                  }
+                },
+              ),
               2.height(context),
               const LightGreyDivisionHori(),
               Padding(
@@ -147,7 +165,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget noAccessToLibraryWidget() {
+  Widget noAccessToLibraryWidget(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
@@ -160,7 +178,7 @@ class _HomeScreenState extends State<HomeScreen> {
           const Text("Application doesn't have access to the library"),
           const SizedBox(height: 10),
           ElevatedButton(
-            onPressed: () => checkAndRequestPermissions(retry: true),
+            onPressed: () => BlocProvider.of<MusicBloc>(context).checkAndRequestPermissions(),
             child: const Text("Allow"),
           ),
         ],
@@ -270,7 +288,7 @@ class RecentlyPlayedView extends StatelessWidget {
           style: AppStyles.extraBold,
         ),
         1.height(context),
-        Column(
+        const Column(
           children: [
             // InkWell(
             //   borderRadius: BorderRadius.circular(AppStyles.defaultBorderRadius),
