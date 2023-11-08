@@ -18,149 +18,135 @@ import 'package:on_audio_query/on_audio_query.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-  // final OnAudioQuery _audioQuery = OnAudioQuery();
-
-  // bool _hasPermission = false;
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  // checkAndRequestPermissions();
-  // }
-
-  // checkAndRequestPermissions({bool retry = false}) async {
-  //   // The param 'retryRequest' is false, by default.
-  //   _hasPermission = await _audioQuery.checkAndRequest(
-  //     retryRequest: retry,
-  //   );
-
-  //   // Only call update the UI if application has all required permissions.
-  //   _hasPermission ? setState(() {}) : null;
-  // }
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    return Scaffold(
-      appBar: CustomAppBar(
-        leading: const CircleAvatar(
-          radius: 14,
-          backgroundImage: AssetImage(
-            AppImages.profilePlaceHolder,
-          ),
-        ),
-        context: context,
-        actions: [
-          Padding(
-            padding: EdgeInsets.all(size.width * 0.025),
-            child: CircleAvatar(
-              radius: 14,
-              backgroundImage: const AssetImage(AppImages.settings),
-              backgroundColor: AppColors.white,
+    return BlocProvider(
+      create: (context) => MusicBloc(),
+      child: Scaffold(
+        appBar: CustomAppBar(
+          leading: const CircleAvatar(
+            radius: 14,
+            backgroundImage: AssetImage(
+              AppImages.profilePlaceHolder,
             ),
           ),
-        ],
-      ),
-      body: ListView(
-        children: [
-          const CarouselView(),
-          1.height(context),
-          const LightGreyDivisionHori(),
-          2.height(context),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: size.width * 0.015),
-                child: const RecentlyPlayedView(),
+          context: context,
+          actions: [
+            Padding(
+              padding: EdgeInsets.all(size.width * 0.025),
+              child: CircleAvatar(
+                radius: 14,
+                backgroundImage: const AssetImage(AppImages.settings),
+                backgroundColor: AppColors.white,
               ),
-              BlocBuilder<MusicBloc, MusicState>(
-                builder: (context, state) {
-                  if (state is NoPermissionState) {
-                    return noAccessToLibraryWidget(context);
-                  } else if (state is GainedPermissionState) {
-                    return FutureBuilder<List<SongModel>>(
-                      future: context.read<MusicBloc>().audioQuery.querySongs(
-                            sortType: null,
-                            orderType: OrderType.ASC_OR_SMALLER,
-                            uriType: UriType.EXTERNAL,
-                            ignoreCase: true,
-                          ),
-                      builder: (context, item) {
-                        final audioQuery = context.read<MusicBloc>().audioQuery;
-                        // Display error, if any.
-                        if (item.hasError) {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                            child: Text(item.error.toString()),
-                          );
-                        }
-
-                        // Waiting content.
-                        if (item.data == null) {
-                          return const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-
-                        // 'Library' is empty.
-                        if (item.data!.isEmpty) {
-                          return const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                            child: Text("Nothing found!"),
-                          );
-                        }
-
-                        // You can use [item.data!] direct or you can create a:
-                        // List<SongModel> songs = item.data!;
-                        return ListView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: item.data!.length,
-                          itemBuilder: (context, index) {
-                            final song = item.data?[index];
-                            return InkWell(
-                              onTap: () {
-                                context.read<MusicBloc>().playMusic(song?.uri ?? '');
-                                // AppRoutes.goTo(
-                                //   context: context,
-                                //   fromBottomToUp: true,
-                                //   screen: PlayMusicScreen(
-                                //     artist: song?.artist ?? 'Unknown',
-                                //     controller: audioQuery,
-                                //     songName: song?.title ?? 'Unknown',
-                                //     id: song?.id ?? 0,
-                                //     hero: 'hero$index',
-                                //   ),
-                                // );
-                              },
-                              child: MusicTile(
-                                artist: song?.artist ?? 'Unknown',
-                                controller: audioQuery,
-                                heroTag: 'hero$index',
-                                title: song?.title ?? 'Unknown',
-                                id: song?.id ?? 0,
-                              ),
+            ),
+          ],
+        ),
+        body: ListView(
+          children: [
+            const CarouselView(),
+            1.height(context),
+            const LightGreyDivisionHori(),
+            2.height(context),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: size.width * 0.015),
+                  child: const RecentlyPlayedView(),
+                ),
+                BlocBuilder<MusicBloc, MusicState>(
+                  builder: (context, state) {
+                    print('inside home screen');
+                    if (state is NoPermissionState) {
+                      return noAccessToLibraryWidget(context);
+                    } else if (state is GainedPermissionState) {
+                      return FutureBuilder<List<SongModel>>(
+                        future: context.read<MusicBloc>().audioQuery.querySongs(
+                              sortType: null,
+                              orderType: OrderType.ASC_OR_SMALLER,
+                              uriType: UriType.EXTERNAL,
+                              ignoreCase: true,
+                            ),
+                        builder: (context, item) {
+                          final audioQuery = context.read<MusicBloc>().audioQuery;
+                          // Display error, if any.
+                          if (item.hasError) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                              child: Text(item.error.toString()),
                             );
-                          },
-                        );
-                      },
-                    );
-                  } else {
-                    return const Text('Loading...');
-                  }
-                },
-              ),
-              2.height(context),
-              const LightGreyDivisionHori(),
-              Padding(
-                padding: EdgeInsets.only(left: size.width * 0.025),
-                child: MusicalSelectionView(size: size),
-              )
-            ],
-          ),
-        ],
+                          }
+
+                          // Waiting content.
+                          if (item.data == null) {
+                            return const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+
+                          // 'Library' is empty.
+                          if (item.data!.isEmpty) {
+                            return const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                              child: Text("Nothing found!"),
+                            );
+                          }
+
+                          // You can use [item.data!] direct or you can create a:
+                          // List<SongModel> songs = item.data!;
+                          return ListView.builder(
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: item.data!.length,
+                            itemBuilder: (context, index) {
+                              final song = item.data?[index] ?? SongModel({});
+                              return InkWell(
+                                onTap: () {
+                                  AppRoutes.goTo(
+                                    context: context,
+                                    fromBottomToUp: true,
+                                    screen: PlayMusicScreen(
+                                      song: song,
+                                      controller: audioQuery,
+                                      hero: 'hero$index',
+                                    ),
+                                  );
+                                  // if (context.read<MusicBloc>().isPlaying) {
+                                  //   context
+                                  //       .read<MusicBloc>()
+                                  //       .pauseMusic(context.read<MusicBloc>().currentMusic);
+                                  // }
+                                },
+                                child: MusicTile(
+                                  artist: song.artist ?? 'Unknown',
+                                  controller: audioQuery,
+                                  heroTag: 'hero$index',
+                                  title: song.title,
+                                  id: song.id,
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      );
+                    } else {
+                      return const Text('Loading...');
+                    }
+                  },
+                ),
+                2.height(context),
+                const LightGreyDivisionHori(),
+                Padding(
+                  padding: EdgeInsets.only(left: size.width * 0.025),
+                  child: MusicalSelectionView(size: size),
+                )
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
