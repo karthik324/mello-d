@@ -17,7 +17,7 @@ class AppRoutes {
     );
   }
 
-  static void back({required BuildContext context}) {
-    return Navigator.pop(context);
+  static void back({required BuildContext context, void state}) {
+    return Navigator.pop(context, [state]);
   }
 }
