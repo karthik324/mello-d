@@ -129,9 +129,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                   context
                                       .read<MusicBloc>()
                                       .pauseMusic(context.read<MusicBloc>().currentMusic);
-                                  context.read<MusicBloc>().playMusic(song.uri ?? '');
+                                  context.read<MusicBloc>().playMusic(song.uri ?? '', song);
                                 } else {
-                                  context.read<MusicBloc>().playMusic(song.uri ?? '');
+                                  context.read<MusicBloc>().playMusic(song.uri ?? '', song) ;
                                 }
                                 AppRoutes.goTo(
                                   context: context,

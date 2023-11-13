@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'package:mello_d/layers/bloc/home/home_bloc.dart';
 import 'package:mello_d/layers/presentation/main_screens/home_screen/home_screen.dart';
 import 'package:mello_d/layers/presentation/main_screens/library_screen/library_screen.dart';
@@ -8,7 +9,12 @@ import 'package:mello_d/layers/presentation/main_screens/search_screen/search_sc
 import 'package:mello_d/layers/styles/app_colors.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
-void main() {
+Future<void> main() async {
+  await JustAudioBackground.init(
+    androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
+    androidNotificationChannelName: 'Audio playback',
+    androidNotificationOngoing: true,
+  );
   runApp(const MyApp());
 }
 

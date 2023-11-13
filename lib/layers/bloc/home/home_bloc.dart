@@ -1,7 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'package:mello_d/layers/bloc/home/home_event.dart';
 import 'package:mello_d/layers/bloc/home/home_state.dart';
+import 'package:on_audio_query/on_audio_query.dart';
 
 class MusicBloc extends Bloc<LoadMusicEvent, MusicState> {
   final AudioPlayer audioPlayer = AudioPlayer();
@@ -10,6 +12,8 @@ class MusicBloc extends Bloc<LoadMusicEvent, MusicState> {
   String position = '';
   var maxDuration = 0.0, value = 0.0;
   String currentMusic = '';
+  int _id = 0;
+  int get id => _id;
 
   MusicBloc() : super(InitialMusicState()) {
     on<NoPermissionEvent>(
@@ -58,15 +62,24 @@ class MusicBloc extends Bloc<LoadMusicEvent, MusicState> {
     );
   }
 
-  void playMusic(String uri) {
+  void playMusic(String uri, SongModel song) {
     try {
       audioPlayer.setAudioSource(
         AudioSource.uri(
           Uri.parse(
             uri,
           ),
+          tag: MediaItem(
+            // Specify a unique ID for each media item:
+            id: '${song.id}',
+            // Metadata to display in the notification:
+            album: '${song.album}',
+            title: song.displayNameWOExt,
+            artUri: Uri.parse(song.uri ?? ''),
+          ),
         ),
       );
+      _id = song.id;
       audioPlayer.play();
       isPlaying = true;
       updatePosition();

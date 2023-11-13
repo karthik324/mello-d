@@ -155,7 +155,7 @@ class PlayMusicScreen extends StatelessWidget {
                               print('not playing');
                               context.read<MusicBloc>().pauseMusic(song.uri ?? '');
                             } else {
-                              context.read<MusicBloc>().playMusic(song.uri ?? '');
+                              context.read<MusicBloc>().playMusic(song.uri ?? '', song);
                             }
                           },
                           icon: BlocBuilder<MusicBloc, MusicState>(
